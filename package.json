@@ -1,0 +1,39 @@
+{
+  "name": "jita",
+  "version": "0.1.0",
+  "description": "Consolidated Jira and GitHub Developer Dashboard with Web GUI and Interactive Terminal UI (TUI)",
+  "type": "module",
+  "bin": {
+    "jita": "./bin/jita.js"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:cli": "esbuild src/tui/index.tsx --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=bin/jita.js",
+    "start": "next start",
+    "tui": "node ./bin/jita.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "ink": "^5.1.0",
+    "ink-spinner": "^5.0.0",
+    "lucide-react": "^1.16.0",
+    "next": "15.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.0.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.23.13",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
