@@ -2,15 +2,18 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import { JiraIssue } from '@/types/jira';
 import { GitHubPullRequest } from '@/types/github';
+import { LocalRepoStatus } from '@/types/git';
 
 export function NeedsAttention({
   reviewRequests,
   inProgressJira,
+  dirtyRepos = [],
 }: {
   reviewRequests: GitHubPullRequest[];
   inProgressJira: JiraIssue[];
+  dirtyRepos?: LocalRepoStatus[];
 }) {
-  const totalCount = reviewRequests.length + inProgressJira.length;
+  const totalCount = reviewRequests.length + inProgressJira.length + dirtyRepos.length;
   if (totalCount === 0) return null;
 
   return (
@@ -50,6 +53,26 @@ export function NeedsAttention({
             </Text>
             <Text color="white" wrap="truncate">
               {issue.summary}
+            </Text>
+          </Box>
+        ))}
+        {dirtyRepos.slice(0, 3).map((repo) => (
+          <Box key={repo.path} gap={1}>
+            <Text bold color="red">
+              [Local Repo]
+            </Text>
+            <Text bold color="white">
+              {repo.name} ({repo.branch}):
+            </Text>
+            <Text color="yellow">
+              {[
+                repo.staged && '+staged',
+                repo.unstaged && '*unstaged',
+                repo.untracked && '?untracked',
+                repo.stashed && `$stash(${repo.stashCount})`,
+                repo.ahead > 0 && `↑${repo.ahead}`,
+                repo.behind > 0 && `↓${repo.behind}`,
+              ].filter(Boolean).join(' ')}
             </Text>
           </Box>
         ))}

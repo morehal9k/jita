@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { NeedsAttention } from '@/components/NeedsAttention';
 import { IssueCard } from '@/components/IssueCard';
 import { PullRequestCard } from '@/components/PullRequestCard';
+import { RepoCard } from '@/components/RepoCard';
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardOverview | null>(null);
@@ -74,6 +75,19 @@ export default function DashboardPage() {
     };
   }, [data?.github, search]);
 
+  const filteredGit = useMemo(() => {
+    const repos = data?.git?.repositories || [];
+    const q = search.toLowerCase();
+    if (!q) return repos;
+    return repos.filter(
+      (r) => r.name.toLowerCase().includes(q) || r.branch.toLowerCase().includes(q) || r.path.toLowerCase().includes(q)
+    );
+  }, [data?.git?.repositories, search]);
+
+  const dirtyRepos = useMemo(() => {
+    return (data?.git?.repositories || []).filter((r) => !r.isClean || r.ahead > 0 || r.behind > 0);
+  }, [data?.git?.repositories]);
+
   return (
     <div>
       <Header
@@ -84,12 +98,14 @@ export default function DashboardPage() {
         onSearchChange={setSearch}
         jiraConnected={data?.jira?.status === 'connected'}
         githubConnected={data?.github?.status === 'connected'}
+        gitConnected={data?.git?.status === 'connected'}
       />
 
       <main className="max-w-7xl mx-auto p-6">
         <NeedsAttention
           reviewRequests={filteredGitHub.reviewRequests}
           inProgressJira={filteredJira.inProgress}
+          dirtyRepos={dirtyRepos}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -220,6 +236,51 @@ export default function DashboardPage() {
             </div>
           </section>
         </div>
+
+        {/* Local Git Repositories Section */}
+        <section className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="font-bold text-base text-neutral-900 dark:text-neutral-100">
+                Local Repositories ($REPO_DIR)
+              </h2>
+              {data?.git?.configuredRepoDir && (
+                <p className="text-xs text-neutral-500 font-mono mt-0.5">
+                  Scanning: {data.git.configuredRepoDir}
+                </p>
+              )}
+            </div>
+            <span className="text-xs text-neutral-500">
+              {filteredGit.length} Repositories • {dirtyRepos.length} Dirty / Out of Sync
+            </span>
+          </div>
+
+          {data?.git?.status === 'not_configured' && (
+            <div className="p-4 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-400">
+              $REPO_DIR is not configured. Set <code className="px-1.5 py-0.5 bg-neutral-200 dark:bg-neutral-800 rounded font-mono">REPO_DIR=~/projects</code> in your environment or <code className="px-1.5 py-0.5 bg-neutral-200 dark:bg-neutral-800 rounded font-mono">.env.local</code> to track local git repositories.
+            </div>
+          )}
+
+          {data?.git?.error && (
+            <div className="p-3 mb-4 text-xs rounded-lg bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 border border-red-200 dark:border-red-900">
+              Git scanning error: {data.git.error}
+            </div>
+          )}
+
+          {data?.git?.status !== 'not_configured' && filteredGit.length === 0 && (
+            <div className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500">
+              No matching local repositories found.
+            </div>
+          )}
+
+          {filteredGit.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {filteredGit.map((repo) => (
+                <RepoCard key={repo.path} repo={repo} />
+              ))}
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

@@ -12,10 +12,10 @@ export function Footer() {
           <Text bold color="yellow">[↑ / ↓]</Text> Select
         </Text>
         <Text>
-          <Text bold color="yellow">[Enter]</Text> Open URL
+          <Text bold color="yellow">[Enter]</Text> Open URL / $EDITOR
         </Text>
         <Text>
-          <Text bold color="yellow">[c]</Text> Copy Key/URL
+          <Text bold color="yellow">[c]</Text> Copy Key/URL/Path
         </Text>
         <Text>
           <Text bold color="yellow">[r]</Text> Refresh
