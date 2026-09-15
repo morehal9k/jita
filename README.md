@@ -11,12 +11,13 @@ Available as both a lightning-fast **Interactive Terminal UI (TUI)** and a moder
 - **Zero-Config Credential Auto-Discovery**:
   - **Jira**: Auto-detects credentials from `~/.gemini/config/mcp_config.json` (Atlassian MCP server config) or environment variables (`JIRA_HOST`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
   - **GitHub**: Auto-detects active authentication via `gh auth token` (macOS Keychain) or environment variables (`GITHUB_TOKEN` / `GITHUB_PERSONAL_ACCESS_TOKEN`).
+  - **Local Git Repositories**: Discovers and monitors git projects configured via `REPO_DIR` (e.g. `REPO_DIR=~/projects` or colon-separated `~/work:~/personal`).
 - **Interactive Terminal UI (TUI)**: Fast keyboard-driven CLI dashboard powered by [Ink](https://github.com/vadimdemedes/ink) (React in the terminal).
 - **Web GUI**: Clean, dark-mode browser dashboard built with Next.js App Router and Tailwind CSS.
-- **Action Items & Focus Banner**: Surfaces pending pull request review requests and in-progress Jira tickets so you know what needs attention immediately.
+- **Action Items & Focus Banner**: Surfaces pending pull request review requests, in-progress Jira tickets, and local git repositories with dirty working trees or unpushed commits.
 - **macOS System Integrations**:
-  - Press `Enter` to open any ticket or PR directly in your default browser.
-  - Press `c` to copy ticket key or PR URL straight to your clipboard (`pbcopy`).
+  - Press `Enter` to open any ticket or PR in your default browser, or open a local repo in `$EDITOR`.
+  - Press `c` to copy ticket key, PR URL, or local repository path straight to your clipboard (`pbcopy`).
 - **Live Auto-Refresh**: Automatically polls for updates every 5 minutes or instantly with `r` / keyboard shortcuts.
 
 ---
@@ -66,11 +67,11 @@ npm run tui
 ### Keyboard Shortcuts in the TUI:
 | Key | Action |
 |---|---|
-| `Tab` / `←` `→` | Switch focus between Jira and GitHub panels |
+| `Tab` / `←` `→` | Switch focus between Jira, GitHub, and Local Repos panels |
 | `↑` `↓` or `j` `k` | Navigate items within focused panel |
-| `Enter` | Open selected Jira issue or GitHub PR in browser |
-| `c` | Copy ticket key or PR link to clipboard |
-| `r` | Refresh Jira & GitHub data immediately |
+| `Enter` | Open selected Jira issue or GitHub PR in browser, or open local repo in `$EDITOR` |
+| `c` | Copy ticket key, PR link, or repository path to clipboard |
+| `r` | Refresh Jira, GitHub, and Local Repos data immediately |
 | `q` / `Esc` | Quit the application |
 
 ---
@@ -100,6 +101,9 @@ npm start
 If you do not use the auto-discovery mechanisms, you can provide environment variables in a `.env.local` file:
 
 ```bash
+# Local Git Repositories (Colon-separated directories to scan for git projects)
+REPO_DIR=~/projects:~/work
+
 # Jira (Optional if configured in ~/.gemini/config/mcp_config.json)
 JIRA_HOST=https://your-domain.atlassian.net
 JIRA_EMAIL=your-email@domain.com

@@ -9,6 +9,7 @@ export function Header({
   onSearchChange,
   jiraConnected,
   githubConnected,
+  gitConnected,
 }: {
   lastRefreshedAt: string;
   isRefreshing: boolean;
@@ -17,6 +18,7 @@ export function Header({
   onSearchChange: (query: string) => void;
   jiraConnected: boolean;
   githubConnected: boolean;
+  gitConnected?: boolean;
 }) {
   return (
     <header className="border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 sticky top-0 z-10 px-6 py-3.5">
@@ -39,6 +41,15 @@ export function Header({
                 <span className={`w-2 h-2 rounded-full ${githubConnected ? 'bg-emerald-500' : 'bg-red-500'}`} />
                 GitHub
               </span>
+              {gitConnected !== undefined && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <span className={`w-2 h-2 rounded-full ${gitConnected ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
+                    Local Git
+                  </span>
+                </>
+              )}
               {lastRefreshedAt && (
                 <>
                   <span>•</span>
